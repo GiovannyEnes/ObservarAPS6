@@ -1,0 +1,215 @@
+{% extends "base.html" %}
+{% from "auditoria/pagination.html" import pager with context %}
+
+{% block title %}ObservAR | Auditoria{% endblock %}
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/auditoria.css') }}?v=1">
+{% endblock %}
+{% block crumb %}
+Auditoria
+{% endblock %}
+
+{% block content %}
+
+<div class="page-head">
+
+    <div>
+
+        <h1>
+            Auditoria
+        </h1>
+
+        <p>
+            Autenticações e acessos protegidos
+        </p>
+
+    </div>
+
+</div>
+
+
+<div class="grid2 audit-grid">
+
+
+    <section class="card table-card audit-section" aria-labelledby="audit-auth-title">
+
+        <h2 id="audit-auth-title">
+            Autenticação
+        </h2>
+
+
+        {{ pager(
+            auth_pagination,
+            auth_per_page,
+            "auth_page",
+            "auth_per_page",
+            label="Autenticação"
+        ) }}
+
+
+        {% if auth %}
+
+        <div class="table-responsive audit-table-wrapper" tabindex="0" role="region" aria-labelledby="audit-auth-title">
+
+            <table aria-labelledby="audit-auth-title">
+
+                <thead>
+
+                    <tr>
+
+                        <th scope="col">
+                            Quando
+                        </th>
+
+                        <th scope="col">
+                            Identificador
+                        </th>
+
+                        <th scope="col">
+                            Etapa
+                        </th>
+
+                        <th scope="col">
+                            Resultado
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    {% for x in auth %}
+
+                    <tr>
+
+                        <td>
+                            {{ x.criado_em | data_hora_br }}
+                        </td>
+
+                        <td>
+                            {{ x.identificador }}
+                        </td>
+
+                        <td>
+                            {{ x.etapa }}
+                        </td>
+
+                        <td>
+                            <span class="audit-badge {% if x.sucesso is sameas true %}badge-sucesso{% elif x.sucesso is sameas false %}badge-erro{% else %}badge-neutro{% endif %}">{{
+                                'Aprovado'
+                                if x.sucesso
+                                else 'Reprovado'
+                            }}</span>
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        {% else %}
+
+        <div class="empty">
+            Sem logs.
+        </div>
+
+        {% endif %}
+
+    </section>
+
+
+    <section class="card table-card audit-section" aria-labelledby="audit-access-title">
+
+        <h2 id="audit-access-title">
+            Acessos
+        </h2>
+
+
+        {{ pager(
+            access_pagination,
+            access_per_page,
+            "access_page",
+            "access_per_page",
+            label="Acessos"
+        ) }}
+
+
+        {% if access %}
+
+        <div class="table-responsive audit-table-wrapper" tabindex="0" role="region" aria-labelledby="audit-access-title">
+
+            <table aria-labelledby="audit-access-title">
+
+                <thead>
+
+                    <tr>
+
+                        <th scope="col">
+                            Quando
+                        </th>
+
+                        <th scope="col">
+                            Rota
+                        </th>
+
+                        <th scope="col">
+                            Resultado
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    {% for x in access %}
+
+                    <tr>
+
+                        <td>
+                            {{ x.criado_em | data_hora_br }}
+                        </td>
+
+                        <td>
+                            {{ x.rota }}
+                        </td>
+
+                        <td>
+                            <span class="audit-badge {% if x.permitido is sameas true %}badge-sucesso{% elif x.permitido is sameas false %}badge-erro{% else %}badge-neutro{% endif %}">{{
+                                'Permitido'
+                                if x.permitido
+                                else 'Negado'
+                            }}</span>
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        {% else %}
+
+        <div class="empty">
+            Sem logs.
+        </div>
+
+        {% endif %}
+
+    </section>
+
+</div>
+
+{% endblock %}
